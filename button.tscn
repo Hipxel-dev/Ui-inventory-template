@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://button.gd" type="Script" id=1]
 [ext_resource path="res://ui.gd" type="Script" id=2]
@@ -21,6 +21,9 @@ width = 99
 size = 8
 font_data = ExtResource( 4 )
 
+[sub_resource type="DynamicFont" id=11]
+font_data = ExtResource( 4 )
+
 [sub_resource type="DynamicFont" id=5]
 font_data = ExtResource( 4 )
 
@@ -40,6 +43,34 @@ color = Color( 1, 1, 1, 1 )
 vertical = true
 
 [sub_resource type="VideoStreamTheora" id=9]
+
+[sub_resource type="Environment" id=10]
+background_mode = 4
+glow_blend_mode = 0
+adjustment_enabled = true
+adjustment_brightness = 1.2
+adjustment_contrast = 1.4
+adjustment_saturation = 1.3
+
+[sub_resource type="DynamicFont" id=13]
+font_data = ExtResource( 4 )
+
+[sub_resource type="StyleBoxFlat" id=15]
+content_margin_left = 6.0
+content_margin_right = 3.0
+content_margin_top = 3.0
+content_margin_bottom = 3.0
+bg_color = Color( 1, 1, 1, 1 )
+
+[sub_resource type="DynamicFont" id=12]
+font_data = ExtResource( 4 )
+
+[sub_resource type="StyleBoxFlat" id=14]
+content_margin_left = 2.0
+content_margin_right = 2.0
+content_margin_top = 2.0
+content_margin_bottom = 2.0
+bg_color = Color( 1, 1, 1, 1 )
 
 [node name="Node2D" type="YSort"]
 script = ExtResource( 2 )
@@ -68,7 +99,7 @@ patch_margin_right = 7
 patch_margin_bottom = 7
 
 [node name="bg" type="ColorRect" parent="button/rect"]
-modulate = Color( 0.0392157, 0.12549, 0.25098, 1 )
+modulate = Color( 0.188235, 0.188235, 0.188235, 1 )
 show_behind_parent = true
 margin_left = -6.0
 margin_top = -1.0
@@ -99,11 +130,11 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -46.0
-margin_top = -15.0
+margin_top = -22.0
 margin_right = -6.0
-margin_bottom = -1.0
+margin_bottom = -6.0
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-custom_fonts/font = SubResource( 3 )
+custom_fonts/font = SubResource( 11 )
 text = "x5"
 align = 2
 
@@ -134,8 +165,13 @@ pitch_scale = 1.5
 
 [node name="cycle" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 5 )
-volume_db = -20.0
-pitch_scale = 0.5
+volume_db = 2.0
+pitch_scale = 1.09
+
+[node name="sort2" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 5 )
+volume_db = 11.0
+pitch_scale = 0.8
 
 [node name="click2" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 5 )
@@ -146,3 +182,82 @@ pitch_scale = 2.0
 margin_right = 40.0
 margin_bottom = 40.0
 stream = SubResource( 9 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 10 )
+
+[node name="sort" type="Node2D" parent="."]
+
+[node name="Node2D" type="Node2D" parent="sort"]
+position = Vector2( 11, 75 )
+
+[node name="text" type="Label" parent="sort/Node2D"]
+margin_top = -6.0
+margin_right = 60.0
+margin_bottom = 10.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 13 )
+custom_styles/normal = SubResource( 15 )
+text = "Amount"
+
+[node name="Node2D2" type="Node2D" parent="sort"]
+position = Vector2( 11, 95 )
+
+[node name="text" type="Label" parent="sort/Node2D2"]
+margin_top = -6.0
+margin_right = 60.0
+margin_bottom = 10.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 13 )
+custom_styles/normal = SubResource( 15 )
+text = "Type"
+
+[node name="Node2D5" type="Node2D" parent="sort"]
+position = Vector2( 11, 95 )
+
+[node name="text" type="Label" parent="sort/Node2D5"]
+margin_top = -6.0
+margin_right = 60.0
+margin_bottom = 10.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 13 )
+custom_styles/normal = SubResource( 15 )
+text = "Randomize"
+
+[node name="Node2D3" type="Node2D" parent="sort"]
+position = Vector2( 11, 95 )
+
+[node name="text" type="Label" parent="sort/Node2D3"]
+margin_top = -6.0
+margin_right = 60.0
+margin_bottom = 10.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 13 )
+custom_styles/normal = SubResource( 15 )
+text = "Reduce size"
+
+[node name="Node2D4" type="Node2D" parent="sort"]
+position = Vector2( 11, 95 )
+
+[node name="text" type="Label" parent="sort/Node2D4"]
+margin_top = -6.0
+margin_right = 60.0
+margin_bottom = 10.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 13 )
+custom_styles/normal = SubResource( 15 )
+text = "Increase size"
+
+[node name="Label" type="Label" parent="sort"]
+margin_left = -42.0
+margin_top = 35.0
+margin_right = 85.0
+margin_bottom = 55.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 12 )
+custom_styles/normal = SubResource( 14 )
+text = "Sort by"
+align = 2
+
+[node name="anchor" type="Position2D" parent="sort"]
+position = Vector2( 11, 75 )

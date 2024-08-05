@@ -111,15 +111,33 @@ var names = [
 	"Beer"
 ];
 
+var vel = Vector2.ZERO
+
 var current_name = ""
 
 var elements = {
-	"Amount": floor(rand_range(1, 6)),
-	"Type": floor(rand_range(1,10))
+	"Amount": floor(rand_range(1,100)),
 	
 }
+
+var types = [
+	Color.cyan,
+	Color.magenta,
+	Color.pink,
+	Color.blueviolet
+]
+
+var current_type = types[0]
+
+
 
 func _ready() -> void:
 	$rect/name.text = str(names[floor(rand_range(0, names.size() - 1))])
 	current_name = $rect/name.text
 	$rect/amount.text = str("x",elements["Amount"])
+	current_type = floor(rand_range(0,types.size()))
+	modulate = types[current_type]
+
+func _physics_process(delta: float) -> void:
+	position += vel * delta * 2
+	vel /= 2
