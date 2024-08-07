@@ -121,10 +121,15 @@ var elements = {
 }
 
 var types = [
-	Color.cyan,
-	Color.magenta,
 	Color.pink,
-	Color.blueviolet
+	Color.cyan,
+	Color.yellow,
+	Color.magenta,
+	Color.red,
+	Color.green,
+	Color.blue,
+	Color.chocolate,
+	Color.burlywood
 ]
 
 var current_type = types[0]
@@ -138,6 +143,34 @@ func _ready() -> void:
 	current_type = floor(rand_range(0,types.size()))
 	modulate = types[current_type]
 
+onready var rect = $rect
+var process = false
+
+var count = 0
+
+var hold = false
+
 func _physics_process(delta: float) -> void:
-	position += vel * delta * 2
-	vel /= 2
+	position = position.linear_interpolate(original_pos,delta * 10)
+	
+	count -= delta
+	if count < 0:
+
+	
+		if global_position.y > 1000 or global_position.y < -32:
+			hide()
+		else:
+			show()
+			
+			$rect/bg.modulate = $rect/bg.modulate.linear_interpolate(Color8(150,150,150,255),delta * 10)
+			
+			rect.margin_right += (114 - rect.margin_right) * 0.3
+			rect.margin_left += (-1 - rect.margin_left) * 0.3
+			rect.margin_top += (-2 - rect.margin_top) * 0.3
+			rect.margin_bottom += (42 - rect.margin_bottom) * 0.3
+			
+			if get_local_mouse_position().x > rect.margin_left and get_local_mouse_position().x < rect.margin_right:
+				if get_local_mouse_position().y > rect.margin_top and get_local_mouse_position().y < rect.margin_bottom:
+					get_parent().get_parent().selected = self
+				
+

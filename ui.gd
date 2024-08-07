@@ -1,4 +1,4 @@
-extends YSort
+extends Node2D
 
 var unfiltered_buttons = []
 
@@ -13,12 +13,13 @@ onready var buttons_sort = [$sort/Node2D, $sort/Node2D2,$sort/Node2D5, $sort/Nod
 
 var last_select = self
 var descend = false
+var count = []
 
 func select_filter(delta):
 	for i in range(buttons_sort.size()):
 		buttons_sort[i].position = buttons_sort[i].position.linear_interpolate($sort/anchor.position + Vector2(0, 25 * i),delta * 30)
 		
-		if get_global_mouse_position().x < 100:
+		if get_global_mouse_position().x < 160:
 			if get_global_mouse_position().y < buttons_sort[i].position.y + 12 and get_global_mouse_position().y > buttons_sort[i].position.y - 12:
 				buttons_sort[i].position.x += 6
 				if Input.is_action_just_pressed("CLICK"):
@@ -37,53 +38,52 @@ func select_filter(delta):
 					descend = !descend
 					buttons_sort[i].position.x = 55
 					$sort2.play()
-			
-func quick_flash(delta):
-	for i in range(buttons.size()):
-		var p = buttons[i]
-		var pos = Vector2(55,55) + Vector2((75 * (i % size)) , 32 * floor((i) / size)) 
+					
+					for o in range(count.size()):
+						count[o] = 0.005 * o
+					reorganize()
 		
-		p.vel += (pos - p.position) * 0.5
-#		p.position = p.position.linear_interpolate(pos,delta * 20)
 		
-
+		
 func _ready() -> void:
-	for i in range(26):
-		var button_inst = $button.duplicate()
+	for i in range(1006):
+		var button_inst = $container/button.duplicate()
 		buttons.append(button_inst)
 		unfiltered_buttons.append(button_inst)
-		add_child(button_inst)
-	
-	$button.queue_free()
+		$container.add_child(button_inst)
+		count.append(i * 0.06)
+		
+	$container/button.queue_free()
 	
 	
 var size_x = 118
 var size_y = 48
 
+var scroll = 0
+var scroll_val = 0
+
+func _input(event: InputEvent) -> void:
+	if Input.is_action_pressed("scroll_down"):
+		scroll -= 155
+	if Input.is_action_pressed("scroll_up"):
+		scroll += 155
+
 func _physics_process(delta: float) -> void:
 	select_filter(delta)
 	
+	$fps.text = str(Engine.get_frames_per_second())
+	scroll_val += (scroll - scroll_val) * 0.1
+	
+	$container.position.y = scroll_val
+	
 	for i in range(buttons.size()):
-		var p = buttons[i]
 		var pos = Vector2(168,25) + Vector2((size_x * (i % size)) , size_y * floor((i) / size)) 
+		buttons[i].original_pos = pos
 		
-		p.get_node("rect").margin_right += (114 - p.get_node("rect").margin_right) * 0.3
-		p.get_node("rect").margin_left += (-1 - p.get_node("rect").margin_left) * 0.3
-		p.get_node("rect").margin_top += (-2 - p.get_node("rect").margin_top) * 0.3
-		p.get_node("rect").margin_bottom += (42 - p.get_node("rect").margin_bottom) * 0.3
-
-		
-		if get_global_mouse_position().x > p.get_node("rect").margin_left + p.position.x and get_global_mouse_position().x < p.get_node("rect").margin_right + p.position.x:
-			if get_global_mouse_position().y > p.get_node("rect").margin_top + p.position.y and get_global_mouse_position().y < p.get_node("rect").margin_bottom + p.position.y:
-				selected = p
-				
-		if p != selected:
-			p.get_node("rect/bg").modulate = p.get_node("rect/bg").modulate.linear_interpolate(Color8(15,15,15),delta * 20)
-		p.original_pos = pos
-		
-		p.vel += (pos - p.position) * 2
-#		p.position = p.position.linear_interpolate(pos,delta * 10)
-		
+#		p.vel += (pos - p.position) * 2
+#		if count[i] < 0:
+#			buttons[i].position = buttons[i].position.linear_interpolate(pos,delta * 10)
+#		count[i] -= delta
 
 	if Input.is_action_pressed("CLICK"):
 		if Input.is_action_just_pressed("ui_accept"):
@@ -100,7 +100,7 @@ func _physics_process(delta: float) -> void:
 		size += 1
 		
 	
-	$info.position /= 3
+	$info.position /= 1.3
 	if selected != self:
 		
 		selected.get_node("rect/bg").modulate = selected.get_node("rect/bg").modulate.linear_interpolate(Color.orangered,delta * 10)
@@ -113,22 +113,29 @@ func _physics_process(delta: float) -> void:
 		if Input.is_action_pressed("CLICK"):
 			selected.get_node("rect/bg").modulate = Color(0,-0,-0)
 		if Input.is_action_just_released("CLICK"):
-			selected.get_node("rect/bg").modulate = Color.orange.lightened(0.5)
+			selected.get_node("rect/bg").modulate = Color.orange.lightened(15.5)
 			$click.play()
 	
-		selected.get_node("rect").margin_right += 1
-		selected.get_node("rect").margin_bottom += 1
-		selected.get_node("rect").margin_top -= 1
-		selected.get_node("rect").margin_left -= 1
-	
+		selected.get_node("rect").margin_right += 4
+		selected.get_node("rect").margin_bottom += 4
+		selected.get_node("rect").margin_top -= 4
+		selected.get_node("rect").margin_left -= 4
+		selected.z_index = 2
+		
 	if last_select != selected:
 		$cycle.play()
 		$info.position.x = 55
-		selected.get_node("rect/bg").modulate = Color.orange.lightened(0.3)
+		selected.get_node("rect/bg").modulate = Color.orange.lightened(55.3)
+		selected.get_node("rect").margin_right = 0
+		selected.get_node("rect").margin_left = 44
 		selected.position.y -= 1
 		last_select = selected
 	
+
+	
 func sort_random():
+	reorganize()
+	
 	var buttons_sorted = []
 	var indexes = []
 	for i in range(buttons.size()):
@@ -148,6 +155,8 @@ var amount_distance = 0
 
 
 func sort_by_type(descending = false):
+	reorganize()
+
 	var buttons_sorted = []
 
 	var types = buttons[0].types
@@ -164,6 +173,8 @@ func sort_by_type(descending = false):
 	buttons = buttons_sorted
 	
 func sort_by_amount(descending = false):
+	reorganize()
+	
 	var buttons_sorted = []
 
 	var amount_max = 100
@@ -180,6 +191,16 @@ func sort_by_amount(descending = false):
 	buttons = buttons_sorted
 	
 
+func reorganize():
+	for i in range(buttons.size()):
+		var p = buttons[i]
+		p.get_node("rect").margin_right = -55
+#		p.get_node("rect").margin_bottom = -100
+#		p.get_node("rect").margin_top = 1000
+		p.get_node("rect").margin_left = 55 	  	
+		p.count = rand_range(0, 0.3)
+	
+	
 #	for i in range(buttons.size()):
 #		var sort = buttons[i].elements["Amount"] 
 #		if amount_distance > buttons[i].elements["Amount"]:
